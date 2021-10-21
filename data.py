@@ -1,10 +1,10 @@
-## Order
+## Order - has past orders and their sizes
 orders = {}
 
-## Conversions
+## Conversions has past conversion related orders
 conversions = {}
 
-## Trade Prices
+## Trade Prices that are metadata - (price, size)
 symbol_trade = {
     "BOND": [],
     "GS": [],
@@ -16,7 +16,7 @@ symbol_trade = {
     "XLF": []
 }
 
-## Book Prices
+## Book Prices - state of the orderbook currently if the market is open
 symbol_book = {
     "BOND": {},
     "GS": {},
@@ -29,7 +29,7 @@ symbol_book = {
 }
 
 ## Open/Close Status of Symbols
-symbol_open = {
+currently_open_symbols = {
     "BOND": False,
     "GS": False,
     "MS": False,
@@ -40,8 +40,8 @@ symbol_open = {
     "XLF": False
 }
 
-## Positions of Symbols
-symbol_positions = {
+## Positions of Symbols that we currently hold in the market
+current_positions_in_symbols = {
     "BOND": 0,
     "GS": 0,
     "MS": 0,
@@ -52,7 +52,7 @@ symbol_positions = {
     "XLF": 0
 }
 
-## Limits of Symbols
+## Limits of Symbols - what is this for??
 symbol_limits = {
     "BOND": 100,
     "GS": 100,
