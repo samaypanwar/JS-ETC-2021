@@ -2,8 +2,8 @@ from utils.hyperparameters import *
 from data import *
 from utils.data_types import *
 from exchange.init_exchange import *
-from exchange.read_exchange import *
-from exchange.write_exchange import *
+from exchange.communicate import *
+from exchange.exchange_info import *
 
 ####################
 ## MISC FUNCTIONS ##
@@ -36,6 +36,6 @@ if __name__ == '__main__':
     while True:
         try:
             main()
-        except socket_error:
+        except SOCKET_ERROR:
             print("\nERROR: Retrying the connection...\n")
             time.sleep(0.1)
