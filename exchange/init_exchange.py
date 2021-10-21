@@ -1,3 +1,8 @@
+    """ HELLO VS OPEN:
+    HELLO response is sent by the server as a first response whenever you try to establish a socket connection.
+    """
+
+
 from socket import *
 from socket import error as SOCKET_ERROR
 from utils.hyperparameters import *

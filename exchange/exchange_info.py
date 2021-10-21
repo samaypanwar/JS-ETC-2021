@@ -1,8 +1,10 @@
 from typing import BinaryIO
+from exchange.communicate import write_to_exchange
 from utils.hyperparameters import *
 from data import *
 from utils.data_types import *
 from communicate import read_from_exchange
+from strategy import penny_pinching, orderbook_filling
 
 ####################
 ## MAIN FUNCTIONS ##
@@ -163,6 +165,38 @@ def server_info(exchange: BinaryIO) -> None:
 
         elif info_type == str(InfoType.BOOK):
             symbol = info["symbol"]
-            buy = info["buy"]
-            sell = info["sell"]
-            symbol_book[symbol] = { "BUY": buy, "SELL": sell }
+            symbol_book[symbol] = {"BUY": info["buy"], "SELL": info["sell"]}
+
+            if symbol == Symbol.BOND:
+                bond_trades = penny_pinching.trade_bonds(symbol_book[Symbol.BOND])
+
+                if bond_trades:
+                    for trade in bond_trades:
+
+                        trade['order_id'] = ORDER_ID
+                        write_to_exchange(exchange, trade)
+                        orders[ORDER_ID] = trade
+                        ORDER_ID += 1
+
+                        if trade['dir'] == str(Direction.BUY):
+                            current_positions_in_symbols[Symbol.USD] -= trade['size'] * trade['price']
+
+            if symbol != Symbol.BOND and symbol not in ['ADR', 'XLF']:
+
+
+                fairvalue = calculate_symbol_fair_value(symbol)
+                trades = orderbook_filling.clear_symbol_orderbook(symbol_book[symbol], fairvalue, symbol)
+
+                if trades:
+
+                    for trade in trades:
+                        trade['order_id'] = ORDER_ID
+                        write_to_exchange(exchange, trade)
+                        orders[ORDER_ID] = trade
+                        ORDER_ID += 1
+
+                        if trade['dir'] == str(Direction.BUY):
+                            current_positions_in_symbols[Symbol.USD] -= trade['size'] * trade['price']
+
+            # Make another for clearing XLF
+            # One for ADR
