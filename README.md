@@ -25,5 +25,5 @@ jas kim and I gonna win some
 // returns the order id which has been removed form the books (when can it be removed?)
 { type: 'OUT', order_id: int }
 
-// returns the book with a symbol and buy and sell price (what are these values?), update in symbol_book
+// returns the book with a symbol and buy and sell list of currentently open orders
 { type: 'BOOK', symbol: str, buy: int, sell: int }
