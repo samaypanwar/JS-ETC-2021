@@ -1,6 +1,6 @@
 # JS-ETC-2021
 jas kim and I gonna win some
-
+- Look at trying to place trades async with our analysis side by side. Also look at the global scope of the data
 // returns your positions, record our current positions in current_positions_in_symbols
 { type: 'HELLO', symbols: [ { symbol: str, position: int } ] }
 

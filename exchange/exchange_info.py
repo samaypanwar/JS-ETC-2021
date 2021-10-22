@@ -137,24 +137,14 @@ def handle_out(info):
     print("Order {}: Dir - {}, Symbol - {}, Price - {}, Orig - {}, Current - {} is off the books".format(_order_id, *orders[_order_id]))
 
 
-def handle_book(info, exchange):
+def handle_book(info):
 
     global symbol_book
-    global ORDER_ID
 
     symbol_book[info["symbol"]] = { "BUY": info["buy"], "SELL": info["sell"] }
 
-    symbol = info["symbol"]
 
-    if symbol == Symbol.BOND:
-        bond_trades = penny_pinching.trade_bonds(symbol_book[Symbol.BOND])
-        place_trade(bond_trades, exchange)
 
-    if symbol != Symbol.BOND and symbol not in ['ADR', 'XLF']:
-
-        fairvalue = orderbook_filling.calculate_symbol_fair_value(symbol)
-        trades = orderbook_filling.clear_symbol_orderbook(symbol_book[symbol], fairvalue, symbol)
-        place_trade(trades, exchange)
 
     # Make another for clearing XLF
             # One for ADR
@@ -180,7 +170,7 @@ handle = {
 }
 
 
-def server_info(exchange: BinaryIO) -> None:
+def server_response(exchange: BinaryIO) -> None:
 
     # Set the global variables
     global SERVER_STATUS, ORDER_ID, symbol_trade, symbol_book
@@ -192,9 +182,5 @@ def server_info(exchange: BinaryIO) -> None:
         # If nothing is returned then break
         if not info:
             break
-
-        # Reading the book also places orders side by side, thus
-        if info['type'] == InfoType.BOOK:
-            handle[info['type']](info, exchange)
 
         handle[info["type"]](info)

@@ -22,7 +22,7 @@ def main() -> None:
     print("Exchange successfully initialised")
     write_to_exchange(exchange, HELLO)
     while True:
-        server_info(exchange)
+        server_response(exchange)
         if SERVER_STATUS == 1:
             # do_action(exchange)
             pass

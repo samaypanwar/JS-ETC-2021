@@ -1,6 +1,8 @@
 from utils.data_types import *
 from utils.hyperparameters import *
 from strategy import trade_symbol
+from data import symbol_book
+from scipy import stats
 
 def clear_symbol_orderbook(symbol_orderbook, fair_value, symbol_name) -> List[Trade]:
     """See if any of the securities are below their fairvalue and then see if any orders in the orderbook
@@ -45,3 +47,24 @@ def clear_symbol_orderbook(symbol_orderbook, fair_value, symbol_name) -> List[Tr
         trades.append(trade)
 
     return trades
+
+def calculate_fair_value(symbol):
+    """Calculates the fairvalue of the symbol based on the most recent orderbook snapshot we have.
+
+    Parameters
+    ----------
+    symbol : str
+        one of the three stocks: MS, GS, WFC
+
+    Returns
+    -------
+    float
+        trimmed mean of the prices quoted in the orderbook
+    """
+
+    global symbol_book
+
+    most_recent_orderbook = symbol_book[symbol]
+    prices = [x[0] for x in [most_recent_orderbook[0] + most_recent_orderbook[1]]]
+
+    return stats.trim_mean(prices, proportiontocut=0.1)
