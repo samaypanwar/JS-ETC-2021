@@ -21,3 +21,6 @@ HELLO = { "type": "hello", "team": TEAM_NAME.upper() }
 
 SERVER_STATUS = 1
 ORDER_ID = 0
+
+BOND_FAIR_VALUE = 1000
+LARGE_NUMBER = 10000000000
