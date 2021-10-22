@@ -62,3 +62,10 @@ symbol_limits = {
     "WFC": 100,
     "XLF": 100
 }
+
+ETF_constituents = {
+    'BOND': 3,
+    'GS': 2,
+    'MS': 3,
+    'WFC': 2
+        }

@@ -1,54 +1,69 @@
+from strategy.etf import etf_strategy
 from utils.hyperparameters import ORDER_ID
 from exchange.communicate import write_to_exchange
-from data import orders, current_positions_in_symbols, symbol_book
-from utils.data_types import Direction, Symbol
+from data import orders, current_positions_in_symbols, symbol_book, conversions
+from utils.data_types import Direction, Symbol, Action
 import penny_pinching
 import orderbook_filling
+from adr import adr_strategy
 
 
-def trade_symbol(order_type, symbol, direction, price, size):
+def trade_symbol(order_type, symbol, direction, price = 0, size = 10):
 
-    return {
+    if order_type == Action.CONVERT:
+        return {
         'type': str(order_type),
         'symbol': symbol,
         'dir': direction,
-        'price': price,
         'size': size
     }
+
+    elif order_type == Action.ADD:
+        return {
+            'type': str(order_type),
+            'symbol': symbol,
+            'dir': direction,
+            'price': price,
+            'size': size
+        }
 
 
 def place_trade(list_of_trades, exchange):
 
-    global ORDER_ID, orders, current_positions_in_symbols
+    global ORDER_ID, orders, current_positions_in_symbols, conversions
 
     if list_of_trades:
         for trade in list_of_trades:
 
             trade['order_id'] = ORDER_ID
             write_to_exchange(exchange, trade)
-            orders[ORDER_ID] = trade
-            ORDER_ID += 1
+            if trade['type'] == Action.CONVERT:
+                conversions[ORDER_ID] = trade
+                ORDER_ID += 1
+
+            elif trade['type'] == Action.ADD:
+                orders[ORDER_ID] = trade
+                ORDER_ID += 1
 
             if trade['dir'] == str(Direction.BUY):
                 current_positions_in_symbols[Symbol.USD] -= trade['size'] * trade['price']
 
-def _bonds_strategy():
+def bonds_strategy():
     bond_trades = penny_pinching.trade_bonds(symbol_book[Symbol.BOND])
     return bond_trades
 
-def _clear_orderbook():
+def clear_orderbook():
 
     symbols = [Symbol.GS, Symbol.WFC, Symbol.MS]
     trades = []
 
     for symbol in symbols:
-        fairvalue = orderbook_filling.calculate_symbol_fair_value(symbol)
-        trade = orderbook_filling.clear_symbol_orderbook(symbol_book[symbol], fairvalue, symbol)
+        trade = orderbook_filling.clear_symbol_orderbook(symbol)
         trades.append(trade)
 
     return trades
 
-def execute_strategy(info, exchange, mode):
+def execute_strategy(exchange, mode):
     """Execute Trades
 
     Parameters
@@ -63,17 +78,17 @@ def execute_strategy(info, exchange, mode):
     global ORDER_ID, symbol_book
 
     if mode[0] == 1:
-        trades = _bonds_strategy()
+        trades = bonds_strategy()
         place_trade(trades, exchange)
 
     if mode[1] == 1:
-        trades = _clear_orderbook()
+        trades = clear_orderbook()
         place_trade(trades, exchange)
 
     if mode[2] == 1:
-        ...
-        # Execute ADR   
+        trades = adr_strategy()
+        place_trade(trades, exchange)
 
     if mode[3] == 1:
-        ...
-        # Execute ETF
+        trades = etf_strategy()
+        place_trade(trades, exchange)

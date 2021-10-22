@@ -2,13 +2,7 @@ from typing import BinaryIO
 from utils.hyperparameters import SERVER_STATUS, ORDER_ID
 from data import orders, conversions, symbol_trade, symbol_book, currently_open_symbols, current_positions_in_symbols
 from utils.data_types import Symbol, Direction, InfoType
-from communicate import read_from_exchange, write_to_exchange
-from strategy import penny_pinching, orderbook_filling, place_trade
-
-
-####################
-## MAIN FUNCTIONS ##
-####################
+from communicate import read_from_exchange
 
 
 def handle_hello(info):
@@ -21,7 +15,6 @@ def handle_hello(info):
     for ticker in symbols:
         current_positions_in_symbols[ticker["symbol"]] = ticker["position"]
 
-
 def handle_open(info):
 
     global currently_open_symbols
@@ -29,7 +22,6 @@ def handle_open(info):
     print("OPENING: {}".format(info["symbols"]))
     for symbol in info["symbols"]:
         currently_open_symbols[symbol] = True
-
 
 def handle_close(info):
 
@@ -44,11 +36,9 @@ def handle_close(info):
         SERVER_STATUS = 0
         symbol_book, symbol_trade = {symbol: [] for symbol in symbol_book}, {symbol: [] for symbol in symbol_trade}
 
-
 def handle_error(info):
 
     print("ERROR: {}".format(info["error"]))
-
 
 def handle_trade(info):
 
@@ -56,22 +46,28 @@ def handle_trade(info):
 
     symbol_trade[info["symbol"]].append((info["price"], info["size"]))
 
-
 def handle_ack(info):
 
-    global current_positions_in_symbols
+    global current_positions_in_symbols, orders, conversions
 
     # Take note of the orderID
     _order_id = info["order_id"]
 
     # If the orderID has already been seen
     if _order_id in orders:
-        direction, symbol, price, size = orders[_order_id] # size or what?
+
+        direction = orders[_order_id]['dir']
+        symbol = orders[_order_id]['symbol']
+        price = orders[_order_id]['price']
+        size = orders[_order_id]['size']
+
         print(f"Order {_order_id}: Dir - {direction}, Symbol - {symbol}, Price - {price}, Orig - {size} has been placed on the books")
 
-    else:
+    elif _order_id in conversions:
+        direction = conversions[_order_id]['dir']
+        symbol = conversions[_order_id]['symbol']
+        size = conversions[_order_id]['size']
 
-        direction, symbol, size = conversions[_order_id]
         print(f"Order {_order_id}: Dir - {direction}, Symbol - {symbol}, Size - {size} has been converted")
 
         # Converting between ETF and its components by doing reverse trades and same with ADR and its foreign counterpart
@@ -105,8 +101,10 @@ def handle_ack(info):
                 current_positions_in_symbols[Symbol.WFC] += 2
                 current_positions_in_symbols[Symbol.XLF] -= 10
 
-        print("CURRENT POSITION: {}".format(current_positions_in_symbols))
+    else:
+        print(f"OrderID: {_order_id} is not in conversions or orders")
 
+    print("CURRENT POSITION: {}".format(current_positions_in_symbols))
 
 def handle_fill(info):
 
@@ -115,13 +113,14 @@ def handle_fill(info):
     _order_id = info["order_id"]
     size = info["size"]
 
-    direction, symbol, price, orig, current = orders[_order_id]
-    current -= size
-
     # Partial fills allowed
-    orders[_order_id] = (direction, symbol, price, orig, current)
+    orig = orders[_order_id]['size']
+    orders[_order_id]['size'] -= size
+    direction = orders[_order_id]
+    symbol = orders[_order_id]['symbol']
+    price = orders[_order_id]['price']
 
-    print(f"Order {_order_id}: Dir - {direction}, Symbol - {symbol}, Price - {price}, Orig - {orig}, Current - {current} has been filled")
+    print(f"Order {_order_id}: Dir - {direction}, Symbol - {symbol}, Price - {price}, Orig - {orig}, Remaining - {orders[_order_id]['size']} has been filled")
 
     if direction == Direction.SELL:
         current_positions_in_symbols[Symbol.USD] += (price * size)
@@ -130,25 +129,23 @@ def handle_fill(info):
         current_positions_in_symbols[symbol] += size
     print("CURRENT POSITION: {}".format(current_positions_in_symbols))
 
-
 def handle_out(info):
 
-    _order_id = info["order_id"]
-    print("Order {}: Dir - {}, Symbol - {}, Price - {}, Orig - {}, Current - {} is off the books".format(_order_id, *orders[_order_id]))
+    global orders
 
+    _order_id = info["order_id"]
+    direction = orders[_order_id]['dir']
+    symbol = orders[_order_id]['symbol']
+    price = orders[_order_id]['price']
+    size = orders[_order_id]['size']
+
+    print(f"Order {_order_id}: Dir - {direction}, Symbol - {symbol}, Price - {price}, Size - {size}, is off the books")
 
 def handle_book(info):
 
     global symbol_book
 
     symbol_book[info["symbol"]] = { "BUY": info["buy"], "SELL": info["sell"] }
-
-
-
-
-    # Make another for clearing XLF
-            # One for ADR
-
 
 handle = {
     # just print current holdings and record them
@@ -168,7 +165,6 @@ handle = {
     # book returned with buy and sell price
     InfoType.BOOK: handle_book
 }
-
 
 def server_response(exchange: BinaryIO) -> None:
 
