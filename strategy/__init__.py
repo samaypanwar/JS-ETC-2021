@@ -58,8 +58,8 @@ def clear_orderbook():
     trades = []
 
     for symbol in symbols:
-        trade = orderbook_filling.clear_symbol_orderbook(symbol)
-        trades.append(trade)
+        new_trades = orderbook_filling.clear_symbol_orderbook(symbol)
+        trades.extend(new_trades)
 
     return trades
 

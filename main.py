@@ -1,3 +1,4 @@
+from strategy import execute_strategy
 from utils.hyperparameters import *
 from data import *
 from utils.data_types import *
@@ -24,8 +25,8 @@ def main() -> None:
     while True:
         server_response(exchange)
         if SERVER_STATUS == 1:
-            # do_action(exchange)
-            pass
+            execute_strategy(exchange, mode=[1, 1, 1, 1])
+            # time.sleep(0.1)
         elif SERVER_STATUS == 0:
             exchange = recreate_exchange()
             if SERVER_STATUS == 0:

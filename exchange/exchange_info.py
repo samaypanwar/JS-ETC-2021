@@ -171,12 +171,12 @@ def server_response(exchange: BinaryIO) -> None:
     # Set the global variables
     global SERVER_STATUS, ORDER_ID, symbol_trade, symbol_book
 
-    for _ in range(250):
+    # for _ in range(250):
 
-        # Read a input from the exchange
-        info = read_from_exchange(exchange)
-        # If nothing is returned then break
-        if not info:
-            break
+    # Read a input from the exchange
+    info = read_from_exchange(exchange)
+    # If nothing is returned then break
+    if not info:
+        return None
 
-        handle[info["type"]](info)
+    handle[info["type"]](info)
