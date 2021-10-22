@@ -1,20 +1,17 @@
-    """ HELLO VS OPEN:
-    HELLO response is sent by the server as a first response whenever you try to establish a socket connection.
-    """
-
-
-from socket import *
-from socket import error as SOCKET_ERROR
-from utils.hyperparameters import *
-from data import *
+from socket import socket, error as SOCKET_ERROR, AF_INET, SOCK_STREAM
+from utils.hyperparameters import EXCHANGE_HOSTNAME, PORT, HELLO
+from data import currently_open_symbols, current_positions_in_symbols
 from typing import BinaryIO
-from utils.data_types import *
+from utils.data_types import InfoType
 import time
 from communicate import read_from_exchange, write_to_exchange
+from exchange_info import handle_hello, handle_open
+
 
 ########################
 ## EXCHANGE FUNCTIONS ##
 ########################
+
 
 def create_exchange() -> BinaryIO:
     """Creates an exchange by making a socket and a makefile,
@@ -38,49 +35,30 @@ def recreate_exchange() -> BinaryIO:
 
     # Checking the status of the server and the current order id
     global SERVER_STATUS
-    global ORDER_ID
     print("Reconnecting to server now...")
 
-    # Making a counter for the attempts for reconnection
-    attempts = 0
     # While not connected to server and you have tried less than 20 times
-    while SERVER_STATUS == 0 and attempts < 20:
+    for attempt in range(20):
+
         try:
-            attempts += 1
             # Try creating an exchange
             exchange = create_exchange()
             SERVER_STATUS = 1
             # Test the connection by sending a HELLO - command from the hyperparameters.py file
             write_to_exchange(exchange, HELLO)
             # Read the response from the server
-            response = read_from_exchange(exchange)
+            info = read_from_exchange(exchange)
             # IT is probably a JSON object as a dictionary
-            print(response)
+            print(info)
             # If the type of response is 'hello'
-            if response["type"] == str(InfoType.HELLO):
-                # Say that we are connected successfully
-                SERVER_STATUS = 1
-                # The response 'symbols' key contains each symbol and your position in that symbol
-                print("POSITIONS: {}".format(response["symbols"]))
-                # Then to record our current position, add your current position to our symbol position dictionary
-                # which records all our current positions
-                all_symbols = response["symbols"]
-                for ticker in all_symbols:
-                    current_positions_in_symbols[ticker["symbol"]] = ticker["position"]
-                print("Reconnected!")
-                ORDER_ID = 0
-
+            if info["type"] == InfoType.HELLO:
+                handle_hello(info)
                 # Return the binary buffer object that is created from create_exchange()
                 return exchange
 
             # However, if the response of the server is that the market is 'open'
-            elif response["type"] == str(InfoType.OPEN):
-
-                # Mark the symbols which are open as True in our symbol_open dictioanry
-                print("OPENING: {}".format(response["symbols"]))
-                for symbol in response["symbols"]:
-                    currently_open_symbols[symbol] = True
-
+            elif info["type"] == InfoType.OPEN:
+                handle_open(info)
                 # Return the binary buffer object that is created from create_exchange()
                 return exchange
 
@@ -92,5 +70,5 @@ def recreate_exchange() -> BinaryIO:
 
         # If the socket returns an error, try again as well
         except SOCKET_ERROR:
-            print(f"Attempt {attempts}: Failed to reconnect, trying again...")
+            print(f"Attempt {attempt}: Failed to reconnect, trying again...")
             time.sleep(0.1)
