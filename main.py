@@ -7,6 +7,8 @@ from exchange.communicate import *
 from exchange.exchange_info import *
 import argparse
 
+PROD_ENV = "test"
+
 ####################
 ## MISC FUNCTIONS ##
 ####################
@@ -23,6 +25,8 @@ def check_argv():
     parser = argparse.ArgumentParser()
     parser.add_argument('mode', type=str, nargs='?',
                         default='1,0,0,0')
+    parser.add_argument('server', type=str, nargs='?',
+                        default='test')
 
     return parser.parse_args()
 
@@ -30,6 +34,10 @@ def main() -> None:
 
     args = check_argv()
     mode = list(map(int, args.mode.split(sep=',')))
+
+    global PROD_ENV
+    PROD_ENV = args.server
+
     global SERVER_STATUS
     exchange: BinaryIO = create_exchange()
     print("Exchange successfully initialised")
