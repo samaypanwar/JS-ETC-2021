@@ -147,6 +147,18 @@ def handle_book(info):
 
     orderbook[info["symbol"]] = { "BUY": info["buy"], "SELL": info["sell"] }
 
+def handle_reject(info):
+
+    _order_id = info['order_id']
+    direction = orders[_order_id]['dir']
+    price = orders[_order_id]['price']
+    size = orders[_order_id]['size']
+
+    del orders[_order_id]
+    
+    if direction == Direction.BUY:
+        current_positions_in_symbols[Ticker.USD] += (size * price)
+
 handle = {
     # just print current holdings and record them
     ResponseType.HELLO: handle_hello,
@@ -164,6 +176,8 @@ handle = {
     ResponseType.OUT: handle_out,
     # book returned with buy and sell price
     ResponseType.BOOK: handle_book
+
+    ResponseType.REJECT: handle_reject
 }
 
 def server_response(exchange: BinaryIO) -> None:
