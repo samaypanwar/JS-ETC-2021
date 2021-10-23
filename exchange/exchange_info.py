@@ -155,7 +155,7 @@ def handle_reject(info):
     size = orders[_order_id]['size']
 
     del orders[_order_id]
-    
+
     if direction == Direction.BUY:
         current_positions_in_symbols[Ticker.USD] += (size * price)
 
@@ -175,7 +175,7 @@ handle = {
     # order has been removed from the order book
     ResponseType.OUT: handle_out,
     # book returned with buy and sell price
-    ResponseType.BOOK: handle_book
+    ResponseType.BOOK: handle_book,
 
     ResponseType.REJECT: handle_reject
 }
