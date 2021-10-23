@@ -40,7 +40,7 @@ def etf_strategy():
         convert_to_xlf = trade_symbol(Action.CONVERT, Ticker.XLF, Direction.SELL, size=10)
         trades = _execute_basket_items(gs, ms, wfc, Direction.BUY)
 
-        trades = buy_xlf + convert_to_xlf +  trades
+        trades.append(buy_xlf, convert_to_xlf)
 
         return trades
 
