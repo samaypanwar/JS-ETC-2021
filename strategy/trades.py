@@ -4,7 +4,6 @@ from data import orders, current_positions_in_symbols, conversions
 from utils.data_types import Direction, Ticker, Action
 
 def trade_symbol(order_type, symbol, direction, price = 0, size = 10):
-
     if order_type == Action.CONVERT:
         return {
         'type': str(order_type),
@@ -26,9 +25,10 @@ def trade_symbol(order_type, symbol, direction, price = 0, size = 10):
 def place_trade(list_of_trades, exchange):
 
     global ORDER_ID, orders, current_positions_in_symbols, conversions
-
+    print(list_of_trades)
     if list_of_trades:
         for trade in list_of_trades:
+            print(trade)
             trade['order_id'] = ORDER_ID
             write_to_exchange(exchange, trade)
             if trade['type'] == Action.CONVERT:
