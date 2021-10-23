@@ -32,7 +32,7 @@ def handle_close(info):
         currently_open_symbols[symbol] = False
 
     # If the entire market is currently closed and nothing is trading then reset the orderbook and trades log
-    if all(currently_open_symbols.keys() == False):
+    if all([not symbol for symbol in currently_open_symbols.values()]):
         SERVER_STATUS = 0
         orderbook, executed_trades = {symbol: [] for symbol in orderbook}, {symbol: [] for symbol in executed_trades}
 
@@ -178,7 +178,8 @@ handle = {
     ResponseType.BOOK: handle_book,
 
     ResponseType.REJECT: handle_reject,
-    ResponseType.TRADE: handle_trade
+    ResponseType.TRADE: handle_trade,
+    'pass': lambda x: ...
 }
 
 def server_response(exchange: BinaryIO) -> None:
@@ -186,14 +187,12 @@ def server_response(exchange: BinaryIO) -> None:
     # Set the global variables
     global SERVER_STATUS, ORDER_ID, executed_trades, orderbook
 
-    # for _ in range(250):
+    for _ in range(250):
 
-    # Read a input from the exchange
-    info = read_from_exchange(exchange)
-    # If nothing is returned then break
-    if not info:
-        return None
+        # Read a input from the exchange
+        info = read_from_exchange(exchange)
+        # If nothing is returned then break
+        if not info:
+            return None
 
-    print(info)
-
-    handle[info["type"]](info)
+        handle[info["type"]](info)

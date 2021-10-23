@@ -63,7 +63,7 @@ def calculate_fair_value(symbol, trim = 0.1, directional=False, direction=None):
     most_recent_orderbook = orderbook[symbol]
 
     if directional == False:
-        prices = [x[0] for x in [most_recent_orderbook["BUY"] + most_recent_orderbook["SELL"]]]
+        prices = [y[0] for x in [most_recent_orderbook["BUY"] + most_recent_orderbook["SELL"]] for y in x]
 
     else:
         prices = [x[0] for x in most_recent_orderbook[direction]]
@@ -72,6 +72,6 @@ def calculate_fair_value(symbol, trim = 0.1, directional=False, direction=None):
     right_cut = int(len(prices) * trim)
     left_cut = int(len(prices) * (1-trim))
 
-    mean = sum(prices[right_cut: left_cut]) / len(prices[right_cut: left_cut])
+    mean = sum(prices[right_cut: left_cut]) / len(prices[right_cut: left_cut]) if right_cut!=left_cut else 0
 
     return mean
