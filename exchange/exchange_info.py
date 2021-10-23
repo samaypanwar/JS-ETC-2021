@@ -179,4 +179,6 @@ def server_response(exchange: BinaryIO) -> None:
     if not info:
         return None
 
+    print(info)
+
     handle[info["type"]](info)

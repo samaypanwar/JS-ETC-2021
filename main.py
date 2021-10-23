@@ -26,7 +26,7 @@ def main() -> None:
         server_response(exchange)
         if SERVER_STATUS == 1:
             execute_strategy(exchange, mode=[1, 1, 1, 1])
-            # time.sleep(0.1)
+            time.sleep(0.1)
         elif SERVER_STATUS == 0:
             exchange = recreate_exchange()
             if SERVER_STATUS == 0:
