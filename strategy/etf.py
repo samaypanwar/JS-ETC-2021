@@ -77,8 +77,8 @@ def _execute_basket_items(gs, ms, wfc, direction):
 
     reverse_direction = Direction.BUY if direction == Direction.SELL else Direction.SELL
     trades = []
-    for symbol in [gs, ms, wfc]:
-        trade = trade_symbol(Action.ADD, symbol, direction, price=symbol[reverse_direction][0][0], size=ETF_constituents[symbol])
+    for symbol, x in zip([gs, ms, wfc], [Ticker.GS, Ticker.MS, Ticker.WFC]):
+        trade = trade_symbol(Action.ADD, symbol, direction, price=symbol[reverse_direction][0][0], size=ETF_constituents[x])
 
         trades.append(trade)
 
