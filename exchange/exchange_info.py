@@ -192,7 +192,7 @@ def server_response(exchange: BinaryIO) -> None:
     # Set the global variables
     global SERVER_STATUS, ORDER_ID, executed_trades, orderbook
 
-    for _ in range(250):
+    for _ in range(300):
 
         # Read a input from the exchange
         info = read_from_exchange(exchange)
