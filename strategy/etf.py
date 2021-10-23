@@ -24,21 +24,21 @@ def etf_strategy():
     empty = _check_empty_books(gs, ms, wfc, xlf)
     if empty: return []
 
-    if _calc_xlf_fair_value(gs, ms, wfc, Direction.SELL) + 102 < (xlf[Direction.BUY][0][0] * 10):
+    if _calc_xlf_fair_value(gs, ms, wfc, Direction.SELL) + 34 < (xlf[Direction.BUY][0][0] * 10):
 
         trades = _execute_basket_items(gs, ms, wfc, Direction.BUY)
-        convert_to_xlf = trade_symbol(Action.CONVERT, Ticker.XLF, Direction.BUY, size=10)
-        sell_xlf = trade_symbol(Action.ADD, Ticker.XLF, Direction.SELL, price=xlf[Direction.BUY][0][0], size=10)
+        convert_to_xlf = trade_symbol(Action.CONVERT, Ticker.XLF, Direction.BUY, size=30)
+        sell_xlf = trade_symbol(Action.ADD, Ticker.XLF, Direction.SELL, price=xlf[Direction.BUY][0][0], size=30)
 
         trades.append(convert_to_xlf)
         trades.append(sell_xlf)
 
         return trades
 
-    elif _calc_xlf_fair_value(gs, ms, wfc, Direction.BUY) > (xlf[Direction.SELL][0][0] * 10 + 102):
+    elif _calc_xlf_fair_value(gs, ms, wfc, Direction.BUY) > (xlf[Direction.SELL][0][0] * 10 + 34):
 
-        buy_xlf = trade_symbol(Action.ADD, Ticker.XLF, Direction.BUY, price=xlf[Direction.SELL][0][0], size=10)
-        convert_to_xlf = trade_symbol(Action.CONVERT, Ticker.XLF, Direction.SELL, size=10)
+        buy_xlf = trade_symbol(Action.ADD, Ticker.XLF, Direction.BUY, price=xlf[Direction.SELL][0][0], size=30)
+        convert_to_xlf = trade_symbol(Action.CONVERT, Ticker.XLF, Direction.SELL, size=30)
         trades = _execute_basket_items(gs, ms, wfc, Direction.BUY)
 
         trades.append(buy_xlf)
@@ -80,7 +80,7 @@ def _execute_basket_items(gs, ms, wfc, direction):
     reverse_direction = Direction.BUY if direction == Direction.SELL else Direction.SELL
     trades = []
     for symbol, x in zip([gs, ms, wfc], [Ticker.GS, Ticker.MS, Ticker.WFC]):
-        trade = trade_symbol(Action.ADD, symbol, direction, price=symbol[reverse_direction][0][0], size=ETF_constituents[x])
+        trade = trade_symbol(Action.ADD, symbol, direction, price=symbol[reverse_direction][0][0], size=3*ETF_constituents[x])
 
         trades.append(trade)
 
