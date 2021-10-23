@@ -14,6 +14,16 @@ PROD_ENV = "test"
 ####################
 
 def initialize() -> None:
+
+    args = check_argv()
+    global EXCHANGE_HOSTNAME
+    PROD_ENV = args.server
+    
+    if PROD_ENV == "production":
+        EXCHANGE_HOSTNAME = '1.1.1.1'
+    elif PROD_ENV == "test":
+        EXCHANGE_HOSTNAME = '10.0.251.221'
+
     print("Initialising...")
     print("Environment: {}".format(ENV))
     print("Port: {}".format(PORT))
@@ -34,14 +44,6 @@ def main() -> None:
 
     args = check_argv()
     mode = list(map(int, args.mode.split(sep=',')))
-
-    global EXCHANGE_HOSTNAME
-    PROD_ENV = args.server
-    
-    if PROD_ENV == "production":
-        EXCHANGE_HOSTNAME = '1.1.1.1'
-    elif PROD_ENV == "test":
-        EXCHANGE_HOSTNAME = '10.0.251.221'
 
     global SERVER_STATUS
     exchange: BinaryIO = create_exchange()
