@@ -22,7 +22,7 @@ def check_argv():
 
     parser = argparse.ArgumentParser()
     parser.add_argument('mode', type=str, nargs='?',
-                        default='1,1,1,1')
+                        default='1,0,0,0')
 
     return parser.parse_args()
 

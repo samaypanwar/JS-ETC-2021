@@ -18,14 +18,14 @@ executed_trades = {
 
 ## Book Prices - state of the orderbook currently if the market is open
 orderbook = {
-    "BOND": {},
-    "GS": {},
-    "MS": {},
-    "USD": {},
-    "VALBZ": {},
-    "VALE": {},
-    "WFC": {},
-    "XLF": {}
+    "BOND": {"BUY": [], "SELL": []},
+    "GS": {"BUY": [], "SELL": []},
+    "MS": {"BUY": [], "SELL": []},
+    "USD": {"BUY": [], "SELL": []},
+    "VALBZ": {"BUY": [], "SELL": []},
+    "VALE": {"BUY": [], "SELL": []},
+    "WFC": {"BUY": [], "SELL": []},
+    "XLF": {"BUY": [], "SELL": []}
 }
 
 ## Open/Close Status of Symbols
