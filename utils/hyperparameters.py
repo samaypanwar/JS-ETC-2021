@@ -11,7 +11,8 @@ PORT = 25000 + (TEST_EXCHANGE_INDEX if ENV == TEST_ENV else 0)
 ZEROETH_HOSTNAME = "0-prod-like"
 FIRST_HOSTNAME = "1-slower"
 SECOND_HOSTNAME = "2-empty"
-EXCHANGE_HOSTNAME = "test-exch-" + TEAM_NAME.lower() + " " + str(PORT) if(ENV==TEST_ENV) else PROD_ENV
+# EXCHANGE_HOSTNAME = "test-exch-" + TEAM_NAME.lower() + " " + str(PORT) if(ENV==TEST_ENV) else PROD_ENV
+EXCHANGE_HOSTNAME = '10.0.251.221'
 
 HELLO = { "type": "hello", "team": TEAM_NAME.upper() }
 
