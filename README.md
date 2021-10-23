@@ -27,3 +27,5 @@ jas kim and I gonna win some
 
 // returns the book with a symbol and buy and sell list of currentently open orders
 { type: 'BOOK', symbol: str, buy: int, sell: int }
+
+hehehe
