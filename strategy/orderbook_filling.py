@@ -11,7 +11,7 @@ def clear_symbol_orderbook(symbol):
     if currently_open_symbols[symbol] == False : return []
 
     buy_order = {
-                'size': 0,
+                'size': 20,
                 'price': 0
                 }
 
@@ -25,19 +25,19 @@ def clear_symbol_orderbook(symbol):
     symbol_orderbook = executed_trades[symbol]
     fair_value = calculate_fair_value(symbol, directional=False)
 
-    for price, size in symbol_orderbook['BUY']:
-        if price > fair_value:
-            sell_order['size'] += size
-            sell_order['price'] = min(sell_order['price'], price)
+    # for price, size in symbol_orderbook['BUY']:
+    #     if price > fair_value:
+    #         sell_order['size'] += size
+    #         sell_order['price'] = min(sell_order['price'], price)
 
     for price, size in symbol_orderbook['SELL']:
         if price < fair_value:
             buy_order['size'] += size
             buy_order['price'] = max(buy_order['price'], price)
 
-    if sell_order['size'] > 0:
-        trade = trade_symbol(Action.ADD, symbol, Direction.SELL, sell_order['price'], sell_order['size'])
-        trades.append(trade)
+    # if sell_order['size'] > 0:
+    #     trade = trade_symbol(Action.ADD, symbol, Direction.SELL, sell_order['price'], sell_order['size'])
+    #     trades.append(trade)
 
     if buy_order['size'] > 0:
         trade = trade_symbol(Action.ADD, symbol, Direction.BUY, sell_order['price'], sell_order['size'])
