@@ -1,4 +1,4 @@
-from strategy import execute_strategy
+from strategy.trades import execute_strategy
 from utils.hyperparameters import *
 from data import *
 from utils.data_types import *

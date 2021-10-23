@@ -1,5 +1,5 @@
 from data import orderbook, executed_trades, currently_open_symbols
-from strategy import trade_symbol
+from strategy.trades import trade_symbol
 from utils.data_types import Ticker, Action, Direction
 
 def adr_strategy():

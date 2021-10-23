@@ -1,5 +1,5 @@
 from data import orderbook, ETF_constituents
-from strategy import trade_symbol
+from strategy.trades import trade_symbol
 from strategy.orderbook_filling import calculate_fair_value
 from utils.data_types import Ticker, Direction, Action
 from utils.hyperparameters import BOND_FAIR_VALUE

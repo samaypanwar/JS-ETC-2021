@@ -1,6 +1,6 @@
 from utils.data_types import *
 from utils.hyperparameters import *
-from strategy import trade_symbol
+from strategy.trades import trade_symbol
 from data import orderbook, currently_open_symbols
 
 def clear_symbol_orderbook(symbol):

@@ -1,6 +1,6 @@
 from utils.data_types import *
 from utils.hyperparameters import *
-from strategy import trade_symbol
+from strategy.trades import trade_symbol
 from data import currently_open_symbols
 
 
@@ -21,7 +21,7 @@ def trade_bonds(bonds_orderbook):
 
     buy_trades = []
     sell_trades = []
-    
+
     if currently_open_symbols[Ticker.BOND] == False: return []
 
     for price, size in bonds_orderbook["BUY"]:
