@@ -177,7 +177,8 @@ handle = {
     # book returned with buy and sell price
     ResponseType.BOOK: handle_book,
 
-    ResponseType.REJECT: handle_reject
+    ResponseType.REJECT: handle_reject,
+    ResponseType.TRADE: handle_trade
 }
 
 def server_response(exchange: BinaryIO) -> None:
