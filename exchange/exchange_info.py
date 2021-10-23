@@ -150,6 +150,11 @@ def handle_book(info):
 def handle_reject(info):
 
     _order_id = info['order_id']
+
+    if _order_id not in orders:
+        del conversions[_order_id]
+        return
+
     direction = orders[_order_id]['dir']
     price = orders[_order_id]['price']
     size = orders[_order_id]['size']

@@ -39,7 +39,7 @@ def recreate_exchange() -> BinaryIO:
     print("Reconnecting to server now...")
 
     # While not connected to server and you have tried less than 20 times
-    for attempt in range(20):
+    for attempt in range(50):
 
         try:
             # Try creating an exchange
@@ -66,7 +66,7 @@ def recreate_exchange() -> BinaryIO:
             else:
                 # If the response is neither 'open' nor 'hello' from the server, sleep and try again and
                 # set server status to 0
-                time.sleep(0.1)
+                time.sleep(0.2)
                 SERVER_STATUS = 0
 
         # If the socket returns an error, try again as well

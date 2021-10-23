@@ -37,7 +37,8 @@ def adr_signal(cs_trade_prices, adr_trade_prices):
     adr_mean= mean(adr_trade_prices)
     fair_diff = cs_mean - adr_mean
 
-    if (fair_diff >= 2):
+    if (fair_diff >= 3):
+        print("CS_MEAN: {} ADR_MEAN: {}".format(cs_mean, adr_mean))
         return [adr_mean, cs_mean]
 
     return None
