@@ -1,7 +1,7 @@
 from typing import BinaryIO
 from utils.hyperparameters import SERVER_STATUS, ORDER_ID
-from data import orders, conversions, symbol_trade, symbol_book, currently_open_symbols, current_positions_in_symbols
-from utils.data_types import Symbol, Direction, InfoType
+from data import orders, conversions, executed_trades, orderbook, currently_open_symbols, current_positions_in_symbols
+from utils.data_types import Ticker, Direction, ResponseType
 from communicate import read_from_exchange
 
 
@@ -25,7 +25,7 @@ def handle_open(info):
 
 def handle_close(info):
 
-    global currently_open_symbols, symbol_book, symbol_trade, SERVER_STATUS
+    global currently_open_symbols, orderbook, executed_trades, SERVER_STATUS
 
     print("CLOSING: {}".format(info["symbols"]))
     for symbol in info["symbols"]:
@@ -34,7 +34,7 @@ def handle_close(info):
     # If the entire market is currently closed and nothing is trading then reset the orderbook and trades log
     if all(currently_open_symbols.keys() == False):
         SERVER_STATUS = 0
-        symbol_book, symbol_trade = {symbol: [] for symbol in symbol_book}, {symbol: [] for symbol in symbol_trade}
+        orderbook, executed_trades = {symbol: [] for symbol in orderbook}, {symbol: [] for symbol in executed_trades}
 
 def handle_error(info):
 
@@ -42,9 +42,9 @@ def handle_error(info):
 
 def handle_trade(info):
 
-    global symbol_trade
+    global executed_trades
 
-    symbol_trade[info["symbol"]].append((info["price"], info["size"]))
+    executed_trades[info["symbol"]].append((info["price"], info["size"]))
 
 def handle_ack(info):
 
@@ -73,33 +73,33 @@ def handle_ack(info):
         # Converting between ETF and its components by doing reverse trades and same with ADR and its foreign counterpart
 
         # Trading cost might be 5 dollars per trade so can take that into account while doing trades
-        if symbol == Symbol.VALE:
-            current_positions_in_symbols[Symbol.VALE] -= size
-            current_positions_in_symbols[Symbol.VALBZ] += size
-            current_positions_in_symbols[Symbol.USD] -= 10
+        if symbol == Ticker.VALE:
+            current_positions_in_symbols[Ticker.VALE] -= size
+            current_positions_in_symbols[Ticker.VALBZ] += size
+            current_positions_in_symbols[Ticker.USD] -= 10
 
         # If it is ETF conversion
-        elif symbol == Symbol.XLF:
+        elif symbol == Ticker.XLF:
             # Account for trading costs
-            current_positions_in_symbols[Symbol.USD] -= 100
+            current_positions_in_symbols[Ticker.USD] -= 100
 
             # If we believe that the ETF is below its fair value, then buy 10 units of that and sell the
             # constituent stocks
             if direction == Direction.BUY:
-                current_positions_in_symbols[Symbol.BOND] -= 3
-                current_positions_in_symbols[Symbol.GS] -= 2
-                current_positions_in_symbols[Symbol.MS] -= 3
-                current_positions_in_symbols[Symbol.WFC] -= 2
-                current_positions_in_symbols[Symbol.XLF] += 10
+                current_positions_in_symbols[Ticker.BOND] -= 3
+                current_positions_in_symbols[Ticker.GS] -= 2
+                current_positions_in_symbols[Ticker.MS] -= 3
+                current_positions_in_symbols[Ticker.WFC] -= 2
+                current_positions_in_symbols[Ticker.XLF] += 10
 
             # If we believe that the ETF is overvalued, then sell 10 units of the ETF and buy the
             # constituent stocks
             elif direction == Direction.SELL:
-                current_positions_in_symbols[Symbol.BOND] += 3
-                current_positions_in_symbols[Symbol.GS] += 2
-                current_positions_in_symbols[Symbol.MS] += 3
-                current_positions_in_symbols[Symbol.WFC] += 2
-                current_positions_in_symbols[Symbol.XLF] -= 10
+                current_positions_in_symbols[Ticker.BOND] += 3
+                current_positions_in_symbols[Ticker.GS] += 2
+                current_positions_in_symbols[Ticker.MS] += 3
+                current_positions_in_symbols[Ticker.WFC] += 2
+                current_positions_in_symbols[Ticker.XLF] -= 10
 
     else:
         print(f"OrderID: {_order_id} is not in conversions or orders")
@@ -123,7 +123,7 @@ def handle_fill(info):
     print(f"Order {_order_id}: Dir - {direction}, Symbol - {symbol}, Price - {price}, Orig - {orig}, Remaining - {orders[_order_id]['size']} has been filled")
 
     if direction == Direction.SELL:
-        current_positions_in_symbols[Symbol.USD] += (price * size)
+        current_positions_in_symbols[Ticker.USD] += (price * size)
         current_positions_in_symbols[symbol] -= size
     else:
         current_positions_in_symbols[symbol] += size
@@ -143,33 +143,33 @@ def handle_out(info):
 
 def handle_book(info):
 
-    global symbol_book
+    global orderbook
 
-    symbol_book[info["symbol"]] = { "BUY": info["buy"], "SELL": info["sell"] }
+    orderbook[info["symbol"]] = { "BUY": info["buy"], "SELL": info["sell"] }
 
 handle = {
     # just print current holdings and record them
-    InfoType.HELLO: handle_hello,
+    ResponseType.HELLO: handle_hello,
     # record the current open symbols
-    InfoType.OPEN: handle_open,
+    ResponseType.OPEN: handle_open,
     # record the currently closed symbols
-    InfoType.CLOSE: handle_close,
+    ResponseType.CLOSE: handle_close,
     # take note of the trade metadata and store it in symbol trade
-    InfoType.ERROR: handle_error,
+    ResponseType.ERROR: handle_error,
     # acknoledgement from the server of your trade being placed on the order book
-    InfoType.ACK: handle_ack,
+    ResponseType.ACK: handle_ack,
     # order has been filled or completed
-    InfoType.FILL: handle_fill,
+    ResponseType.FILL: handle_fill,
     # order has been removed from the order book
-    InfoType.OUT: handle_out,
+    ResponseType.OUT: handle_out,
     # book returned with buy and sell price
-    InfoType.BOOK: handle_book
+    ResponseType.BOOK: handle_book
 }
 
 def server_response(exchange: BinaryIO) -> None:
 
     # Set the global variables
-    global SERVER_STATUS, ORDER_ID, symbol_trade, symbol_book
+    global SERVER_STATUS, ORDER_ID, executed_trades, orderbook
 
     # for _ in range(250):
 

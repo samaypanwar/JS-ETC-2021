@@ -5,7 +5,7 @@ orders = {}
 conversions = {}
 
 ## Trade Prices that are metadata - (price, size)
-symbol_trade = {
+executed_trades = {
     "BOND": [],
     "GS": [],
     "MS": [],
@@ -17,7 +17,7 @@ symbol_trade = {
 }
 
 ## Book Prices - state of the orderbook currently if the market is open
-symbol_book = {
+orderbook = {
     "BOND": {},
     "GS": {},
     "MS": {},

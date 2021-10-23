@@ -13,7 +13,7 @@ jas kim and I gonna win some
 // returns an error, no need to do anything
 { type: 'ERROR', error: str }
 
-// returns price and size of a trade that has been executed in the market, add trade information to symbol_trade
+// returns price and size of a trade that has been executed in the market, add trade information to executed_trades
 { type: 'TRADE', symbol: str, price: int, size: int }
 
 // returns id of the order which has been added to the books, do nothing if it is a regular trade order else it is a conversion so adjust positions and deduct conversion cost

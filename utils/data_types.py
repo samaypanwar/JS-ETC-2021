@@ -1,17 +1,8 @@
-from typing import Dict, Union, List, Tuple
-
-## Types for data
-Trade = Dict[str, Union[str, int]]
-RestingOrder = List[int]
-RestingDict = Dict[str, List[RestingOrder]]
-TradeInfo = Tuple[int]
-
-## Types for exchange sending
 class Action:
   ADD: str = "add"
   CONVERT: str = "convert"
 
-class Symbol:
+class Ticker:
   BOND: str = "BOND"
   GS: str = "GS"
   MS: str = "MS"
@@ -25,7 +16,7 @@ class Direction:
   BUY: str = "BUY"
   SELL: str = "SELL"
 
-class InfoType:
+class ResponseType:
   HELLO: str = "hello"
   OPEN: str = "open"
   CLOSE: str = "close"

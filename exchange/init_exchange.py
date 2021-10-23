@@ -2,7 +2,7 @@ from socket import socket, error as SOCKET_ERROR, AF_INET, SOCK_STREAM
 from utils.hyperparameters import EXCHANGE_HOSTNAME, PORT, HELLO
 from data import currently_open_symbols, current_positions_in_symbols
 from typing import BinaryIO
-from utils.data_types import InfoType
+from utils.data_types import ResponseType
 import time
 from communicate import read_from_exchange, write_to_exchange
 from exchange_info import handle_hello, handle_open
@@ -51,13 +51,13 @@ def recreate_exchange() -> BinaryIO:
             # IT is probably a JSON object as a dictionary
             print(info)
             # If the type of response is 'hello'
-            if info["type"] == InfoType.HELLO:
+            if info["type"] == ResponseType.HELLO:
                 handle_hello(info)
                 # Return the binary buffer object that is created from create_exchange()
                 return exchange
 
             # However, if the response of the server is that the market is 'open'
-            elif info["type"] == InfoType.OPEN:
+            elif info["type"] == ResponseType.OPEN:
                 handle_open(info)
                 # Return the binary buffer object that is created from create_exchange()
                 return exchange

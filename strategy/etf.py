@@ -1,7 +1,7 @@
-from data import symbol_book, ETF_constituents
+from data import orderbook, ETF_constituents
 from strategy import trade_symbol
 from strategy.orderbook_filling import calculate_fair_value
-from utils.data_types import Symbol, Direction, Action
+from utils.data_types import Ticker, Direction, Action
 from utils.hyperparameters import BOND_FAIR_VALUE
 
 def etf_strategy():
@@ -15,11 +15,11 @@ def etf_strategy():
 
     """
 
-    global symbol_book
-    gs = symbol_book[Symbol.GS]
-    ms = symbol_book[Symbol.MS]
-    wfc = symbol_book[Symbol.WFC]
-    xlf = symbol_book[Symbol.XLF]
+    global orderbook
+    gs = orderbook[Ticker.GS]
+    ms = orderbook[Ticker.MS]
+    wfc = orderbook[Ticker.WFC]
+    xlf = orderbook[Ticker.XLF]
 
     empty = _check_empty_books(gs, ms, wfc, xlf)
     if empty: return []
@@ -27,8 +27,8 @@ def etf_strategy():
     if _calc_xlf_fair_value(gs, ms, wfc, Direction.SELL) + 102 < (xlf[Direction.BUY][0][0] * 10):
 
         trades = _execute_basket_items(gs, ms, wfc, Direction.BUY)
-        convert_to_xlf = trade_symbol(Action.CONVERT, Symbol.XLF, Direction.BUY, size=10)
-        sell_xlf = trade_symbol(Action.ADD, Symbol.XLF, Direction.SELL, price=xlf[Direction.BUY][0][0], size=10)
+        convert_to_xlf = trade_symbol(Action.CONVERT, Ticker.XLF, Direction.BUY, size=10)
+        sell_xlf = trade_symbol(Action.ADD, Ticker.XLF, Direction.SELL, price=xlf[Direction.BUY][0][0], size=10)
 
         trades = trades + convert_to_xlf + sell_xlf
 
@@ -36,8 +36,8 @@ def etf_strategy():
 
     elif _calc_xlf_fair_value(gs, ms, wfc, Direction.BUY) > (xlf[Direction.SELL][0][0] * 10 + 102):
 
-        buy_xlf = trade_symbol(Action.ADD, Symbol.XLF, Direction.BUY, price=xlf[Direction.SELL][0][0], size=10)
-        convert_to_xlf = trade_symbol(Action.CONVERT, Symbol.XLF, Direction.SELL, size=10)
+        buy_xlf = trade_symbol(Action.ADD, Ticker.XLF, Direction.BUY, price=xlf[Direction.SELL][0][0], size=10)
+        convert_to_xlf = trade_symbol(Action.CONVERT, Ticker.XLF, Direction.SELL, size=10)
         trades = _execute_basket_items(gs, ms, wfc, Direction.BUY)
 
         trades = buy_xlf + convert_to_xlf +  trades
@@ -60,9 +60,9 @@ def _check_empty_books(gs, ms, wfc, xlf):
 def _calc_xlf_fair_value(gs, ms, wfc, direction):
 
     # If we want fairvalue instead of the top priority orderbook
-    # gs_fairvalue = calculate_fair_value(Symbol.GS, trim=0.1, directional=True, direction=direction)
-    # ms_fairvalue = calculate_fair_value(Symbol.GS, trim=0.1, directional=True, direction=direction)
-    # wfc_fairvalue = calculate_fair_value(Symbol.GS, trim=0.1, directional=True, direction=direction)
+    # gs_fairvalue = calculate_fair_value(Ticker.GS, trim=0.1, directional=True, direction=direction)
+    # ms_fairvalue = calculate_fair_value(Ticker.GS, trim=0.1, directional=True, direction=direction)
+    # wfc_fairvalue = calculate_fair_value(Ticker.GS, trim=0.1, directional=True, direction=direction)
 
     gs_fairvalue = gs[direction][0][0]
     ms_fairvalue = ms[direction][0][0]

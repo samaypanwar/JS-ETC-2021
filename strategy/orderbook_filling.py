@@ -1,17 +1,14 @@
 from utils.data_types import *
 from utils.hyperparameters import *
 from strategy import trade_symbol
-from data import symbol_book
+from data import orderbook, currently_open_symbols
 
 def clear_symbol_orderbook(symbol):
     """See if any of the securities are below their fairvalue and then see if any orders in the orderbook
     have an oppurtunity of arbitrage
-
-    Returns
-    -------
-    List[Dict]
-        Returns a list of trades to make
     """
+
+    if currently_open_symbols[symbol] == False : return []
 
     buy_order = {
                 'size': 0,
@@ -25,7 +22,7 @@ def clear_symbol_orderbook(symbol):
 
     trades = []
 
-    symbol_orderbook = symbol_book[symbol]
+    symbol_orderbook = orderbook[symbol]
     fair_value = calculate_fair_value(symbol, directional=False)
 
     for price, size in symbol_orderbook['BUY']:
@@ -62,8 +59,8 @@ def calculate_fair_value(symbol, trim = 0.1, directional=False, direction=None):
         trimmed mean of the prices quoted in the orderbook
     """
 
-    global symbol_book
-    most_recent_orderbook = symbol_book[symbol]
+    global orderbook
+    most_recent_orderbook = orderbook[symbol]
 
     if directional == False:
         prices = [x[0] for x in [most_recent_orderbook["BUY"] + most_recent_orderbook["SELL"]]]
