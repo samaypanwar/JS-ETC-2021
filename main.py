@@ -5,6 +5,7 @@ from utils.data_types import *
 from exchange.init_exchange import *
 from exchange.communicate import *
 from exchange.exchange_info import *
+import argparse
 
 ####################
 ## MISC FUNCTIONS ##
@@ -17,7 +18,18 @@ def initialize() -> None:
     print("Hostname: {}".format(EXCHANGE_HOSTNAME))
     print()
 
+def check_argv():
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('mode', type=str, nargs=1,
+                        default='1,1,1,1')
+
+    return parser.parse_args()
+
 def main() -> None:
+
+    args = check_argv()
+    mode = list(map(int, args.mode.split(sep=',')))
     global SERVER_STATUS
     exchange: BinaryIO = create_exchange()
     print("Exchange successfully initialised")
@@ -25,7 +37,7 @@ def main() -> None:
     while True:
         server_response(exchange)
         if SERVER_STATUS == 1:
-            execute_strategy(exchange, mode=[1, 1, 1, 1])
+            execute_strategy(exchange, mode=mode)
             time.sleep(0.1)
         elif SERVER_STATUS == 0:
             exchange = recreate_exchange()
