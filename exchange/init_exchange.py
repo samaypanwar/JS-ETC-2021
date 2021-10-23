@@ -1,5 +1,5 @@
 from socket import socket, error as SOCKET_ERROR, AF_INET, SOCK_STREAM
-from utils.hyperparameters import EXCHANGE_HOSTNAME, PORT, HELLO
+from utils.hyperparameters import PORT, HELLO, SERVER_STATUS, EXCHANGE_HOSTNAME
 from data import currently_open_symbols, current_positions_in_symbols
 from typing import BinaryIO
 from utils.data_types import ResponseType
