@@ -4,7 +4,6 @@
 
 TEAM_NAME = "Wildcard"
 TEST_ENV = "test"
-PROD_ENV = "production"
 ENV = TEST_ENV
 TEST_EXCHANGE_INDEX = 0
 PORT = 25000 + (TEST_EXCHANGE_INDEX if ENV == TEST_ENV else 0)

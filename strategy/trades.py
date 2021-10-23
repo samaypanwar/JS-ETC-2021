@@ -39,5 +39,5 @@ def place_trade(list_of_trades, exchange):
                 orders[ORDER_ID] = trade
                 ORDER_ID += 1
 
-            if trade['dir'] == str(Direction.BUY):
-                current_positions_in_symbols[Ticker.USD] -= trade['size'] * trade['price']
+                if trade['dir'] == str(Direction.BUY):
+                    current_positions_in_symbols[Ticker.USD] -= trade['size'] * trade['price']
