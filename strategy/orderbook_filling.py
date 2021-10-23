@@ -22,7 +22,7 @@ def clear_symbol_orderbook(symbol):
 
     trades = []
 
-    symbol_orderbook = executed_trades[symbol]
+    symbol_orderbook = orderbook[symbol]
     fair_value = calculate_fair_value(symbol, directional=False)
 
     # for price, size in symbol_orderbook['BUY']:

@@ -31,7 +31,8 @@ def trade_bonds(bonds_orderbook):
             buy_trades.append(trade)
 
     for price, size in bonds_orderbook["SELL"]:
-
+        
+        # if price <= BOND_FAIR_VALUE:
         if price < BOND_FAIR_VALUE:
             trade = trade_symbol(Action.ADD, Ticker.BOND, Direction.BUY, price, size)
             sell_trades.append(trade)

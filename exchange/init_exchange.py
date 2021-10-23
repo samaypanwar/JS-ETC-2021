@@ -1,5 +1,6 @@
 from socket import socket, error as SOCKET_ERROR, AF_INET, SOCK_STREAM
-from utils.hyperparameters import PORT, HELLO, SERVER_STATUS, EXCHANGE_HOSTNAME
+from utils.hyperparameters import PORT, HELLO, SERVER_STATUS
+# EXCHANGE_HOSTNAME
 from data import currently_open_symbols, current_positions_in_symbols
 from typing import BinaryIO
 from utils.data_types import ResponseType
@@ -13,7 +14,7 @@ from exchange.exchange_info import handle_hello, handle_open
 ########################
 
 
-def create_exchange() -> BinaryIO:
+def create_exchange(EXCHANGE_HOSTNAME) -> BinaryIO:
     """Creates an exchange by making a socket and a makefile,
     returns a binary buffer object related to the socket
     """
@@ -21,10 +22,10 @@ def create_exchange() -> BinaryIO:
     global SERVER_STATUS
     # Initiating a socket as a unique item from a family
     sock = socket(AF_INET, SOCK_STREAM)
-    print("Connecting to the server now...")
+    print("Connecting to " + EXCHANGE_HOSTNAME + " " + str(PORT))
     # Establish a connection with the server with the given port and IP
     sock.connect((EXCHANGE_HOSTNAME, PORT))
-    print("Connected.")
+    print("Connected")
     SERVER_STATUS = 1
     print()
     return sock.makefile("rw", 1)
@@ -38,7 +39,7 @@ def recreate_exchange() -> BinaryIO:
     print("Reconnecting to server now...")
 
     # While not connected to server and you have tried less than 20 times
-    for attempt in range(20):
+    for attempt in range(50):
 
         try:
             # Try creating an exchange
@@ -65,7 +66,7 @@ def recreate_exchange() -> BinaryIO:
             else:
                 # If the response is neither 'open' nor 'hello' from the server, sleep and try again and
                 # set server status to 0
-                time.sleep(0.1)
+                time.sleep(0.2)
                 SERVER_STATUS = 0
 
         # If the socket returns an error, try again as well
