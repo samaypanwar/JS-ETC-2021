@@ -1,7 +1,7 @@
 from utils.data_types import *
 from utils.hyperparameters import *
 from strategy.trades import trade_symbol
-from data import orderbook, currently_open_symbols
+from data import orderbook, currently_open_symbols, executed_trades
 
 def clear_symbol_orderbook(symbol):
     """See if any of the securities are below their fairvalue and then see if any orders in the orderbook
@@ -22,7 +22,7 @@ def clear_symbol_orderbook(symbol):
 
     trades = []
 
-    symbol_orderbook = orderbook[symbol]
+    symbol_orderbook = executed_trades[symbol]
     fair_value = calculate_fair_value(symbol, directional=False)
 
     for price, size in symbol_orderbook['BUY']:
