@@ -23,7 +23,7 @@ def clear_symbol_orderbook(symbol):
     trades = []
 
     symbol_orderbook = orderbook[symbol]
-    fair_value = calculate_fair_value(symbol, directional=False)
+    fair_value = calculate_fair_value(symbol, directional=True, direction='BUY')
 
     # for price, size in symbol_orderbook['BUY']:
     #     if price > fair_value:
@@ -68,10 +68,10 @@ def calculate_fair_value(symbol, trim = 0.1, directional=False, direction=None):
     else:
         prices = [x[0] for x in most_recent_orderbook[direction]]
 
-    prices = sorted(prices)
-    right_cut = int(len(prices) * trim)
-    left_cut = int(len(prices) * (1-trim))
+    # prices = sorted(prices)
+    # right_cut = int(len(prices) * trim)
+    # left_cut = int(len(prices) * (1-trim))
 
-    mean = sum(prices[right_cut: left_cut]) / len(prices[right_cut: left_cut]) if right_cut!=left_cut else 0
+    # mean = sum(prices[right_cut: left_cut]) / len(prices[right_cut: left_cut]) if right_cut!=left_cut else 0
 
-    return mean
+    return prices[0]
