@@ -4,8 +4,8 @@ from data import currently_open_symbols, current_positions_in_symbols
 from typing import BinaryIO
 from utils.data_types import ResponseType
 import time
-from communicate import read_from_exchange, write_to_exchange
-from exchange_info import handle_hello, handle_open
+from exchange.communicate import read_from_exchange, write_to_exchange
+from exchange.exchange_info import handle_hello, handle_open
 
 
 ########################

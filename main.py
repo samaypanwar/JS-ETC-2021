@@ -1,4 +1,4 @@
-from strategy.trades import execute_strategy
+from strategy import execute_strategy
 from utils.hyperparameters import *
 from data import *
 from utils.data_types import *
@@ -21,7 +21,7 @@ def initialize() -> None:
 def check_argv():
 
     parser = argparse.ArgumentParser()
-    parser.add_argument('mode', type=str, nargs=1,
+    parser.add_argument('mode', type=str, nargs='?',
                         default='1,1,1,1')
 
     return parser.parse_args()

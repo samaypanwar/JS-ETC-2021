@@ -2,7 +2,7 @@ from typing import BinaryIO
 from utils.hyperparameters import SERVER_STATUS, ORDER_ID
 from data import orders, conversions, executed_trades, orderbook, currently_open_symbols, current_positions_in_symbols
 from utils.data_types import Ticker, Direction, ResponseType
-from communicate import read_from_exchange
+from exchange.communicate import read_from_exchange
 
 
 def handle_hello(info):
